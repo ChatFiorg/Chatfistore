@@ -367,7 +367,7 @@ export default function StoreClient({ store, username }: { store: Store; usernam
 
       {/* ── Hero gradient banner ── */}
       <div style={{
-        position: 'relative', width: '100%', height: 190, overflow: 'hidden',
+        position: 'relative', width: '100%', height: 190, overflow: 'visible',
         background: `radial-gradient(120% 100% at 0% 0%, ${hexToRgba(primary, 0.22)}, transparent 55%), radial-gradient(110% 90% at 100% 0%, rgba(31,174,99,0.12), transparent 50%), linear-gradient(165deg, #FBEEE6, ${C.ink} 75%)`,
       }}>
         <p style={{ position: 'absolute', right: -8, top: -24, userSelect: 'none', pointerEvents: 'none', fontFamily: "'Bebas Neue', sans-serif", fontSize: 168, lineHeight: 1, color: 'rgba(17,17,20,0.05)', letterSpacing: '-0.02em', margin: 0 }}>
@@ -377,7 +377,7 @@ export default function StoreClient({ store, username }: { store: Store; usernam
 
       {/* ── Store identity — logo lifts out of banner ── */}
       <div style={{ maxWidth: 1000, margin: '0 auto', padding: '0 16px' }}>
-        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 14, marginTop: -36, marginBottom: 14 }}>
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 14, marginTop: -36, marginBottom: 14, position: 'relative', zIndex: 2 }}>
           {/* Logo */}
           {store.logo ? (
             <img src={store.logo} alt="" style={{ width: 72, height: 72, borderRadius: 16, objectFit: 'cover', flexShrink: 0, border: `3px solid ${C.ink}`, boxShadow: `0 0 0 2px ${hexToRgba(primary, 0.5)}, 0 2px 14px rgba(0,0,0,0.1)` }} />
