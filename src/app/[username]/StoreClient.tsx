@@ -357,7 +357,7 @@ export default function StoreClient({ store, username }: { store: Store; usernam
       const res = await fetch(`/api/charge`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ productId: selectedProduct.id, quantity, buyerName: buyerName.trim(), buyerPhone: buyerPhone.trim(), buyerAddress: fullAddress, buyerEmail: email.trim() || null }),
+        body: JSON.stringify({ username, productId: selectedProduct.id, quantity, buyerName: buyerName.trim(), buyerPhone: buyerPhone.trim(), buyerAddress: fullAddress, buyerEmail: email.trim() || null }),
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
