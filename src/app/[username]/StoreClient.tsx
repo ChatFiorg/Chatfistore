@@ -27,6 +27,7 @@ interface Store {
   theme: { primary: string; bg: string };
   contact: { whatsapp?: string; email?: string; twitter?: string };
   products: Product[];
+  template?: string;
 }
 
 function hexToRgba(hex: string, alpha: number): string {
@@ -38,10 +39,55 @@ function hexToRgba(hex: string, alpha: number): string {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 
-const C = {
+function getTheme(template: string) {
+  if (template === 'dark') return {
+    bg: '#08080A',
+    ink: '#111113',
+    surface: '#18181B',
+    surfaceSoft: '#27272A',
+    divider: '#27272A',
+    bone: '#FAFAFA',
+    mute: '#71717A',
+    signal: '#FF4D2E',
+    signalSoft: 'rgba(255,77,46,0.15)',
+    mint: '#1FAE63',
+    mintSoft: 'rgba(31,174,99,0.15)',
+  };
+  if (template === 'combo') return {
+    bg: '#0F0A1E',
+    ink: '#160D2E',
+    surface: '#1E1340',
+    surfaceSoft: '#2A1D56',
+    divider: '#2A1D56',
+    bone: '#F0EAFF',
+    mute: '#9B8FC4',
+    signal: '#8B5CF6',
+    signalSoft: 'rgba(139,92,246,0.15)',
+    mint: '#1FAE63',
+    mintSoft: 'rgba(31,174,99,0.15)',
+  };
+  // clean (default light)
+  return {
+    bg: '#fafafa',
+    ink: '#FFFFFF',
+    surface: '#F7F6F2',
+    surfaceSoft: '#EFEDE7',
+    divider: '#E4E2DC',
+    bone: '#15161A',
+    mute: '#76777E',
+    signal: '#FF4D2E',
+    signalSoft: 'rgba(255,77,46,0.12)',
+    mint: '#1FAE63',
+    mintSoft: 'rgba(31,174,99,0.12)',
+  };
+}
+
+const C_BASE = {
+  bg: '#fafafa',
   ink: '#FFFFFF',
   surface: '#F7F6F2',
   surfaceSoft: '#EFEDE7',
+  divider: '#E4E2DC',
   bone: '#15161A',
   mute: '#76777E',
   signal: '#FF4D2E',
@@ -208,6 +254,7 @@ export default function StoreClient({ store, username }: { store: Store; usernam
   const [paymentLink, setPaymentLink] = useState('');
   const [error, setError] = useState('');
 
+  const C = getTheme((store as any).template || 'clean');
   const primary = store.theme?.primary || C.signal;
   const tint = hexToRgba(primary, 0.14);
   const initial = store.name?.[0]?.toUpperCase() || 'S';

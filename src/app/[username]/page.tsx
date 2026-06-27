@@ -30,7 +30,19 @@ export default async function StorePage({ params }: { params: Promise<{ username
 
     const template = store.template || 'clean';
 
+    // Dark template — bold dark UI
     if (template === 'dark') return <DarkTemplate store={store} username={username} />;
+
+    // Combo — dark template with purple primary
+    if (template === 'combo') {
+      const comboStore = {
+        ...store,
+        theme: { ...store.theme, primary: store.theme?.primary || '#8B5CF6' },
+      };
+      return <DarkTemplate store={comboStore} username={username} />;
+    }
+
+    // Clean — light minimal (default)
     return <StoreClient store={store} username={username} />;
   } catch {
     notFound();
