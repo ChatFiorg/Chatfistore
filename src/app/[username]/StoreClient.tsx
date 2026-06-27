@@ -188,16 +188,16 @@ function IconStar() {
   return <svg width="13" height="13" viewBox="0 0 24 24" fill="#FFC24D" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" /></svg>;
 }
 function IconPackage() {
-  return <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={C.mint} strokeWidth="2" strokeLinecap="round"><path d="m7.5 4.27 9 5.15" /><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><path d="m3.3 7 8.7 5 8.7-5" /><path d="M12 22V12" /></svg>;
+  return <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1FAE63" strokeWidth="2" strokeLinecap="round"><path d="m7.5 4.27 9 5.15" /><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" /><path d="m3.3 7 8.7 5 8.7-5" /><path d="M12 22V12" /></svg>;
 }
 function IconClock() {
-  return <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={C.signal} strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>;
+  return <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FF4D2E" strokeWidth="2" strokeLinecap="round"><circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" /></svg>;
 }
 function BadgeCheck() {
   return (
     <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
-      <path d="M12 2l2.4 3.2L18 4l.8 3.8L22 10l-2.4 2 .8 4-3.8-.4L14 18l-2-3.2L10 18l-2.6-2.4-3.8.4.8-4L2 10l3.2-2.2L6 4l3.6 1.2z" fill={C.mint} opacity="0.2" />
-      <path d="M12 2l2.4 3.2L18 4l.8 3.8L22 10l-2.4 2 .8 4-3.8-.4L14 18l-2-3.2L10 18l-2.6-2.4-3.8.4.8-4L2 10l3.2-2.2L6 4l3.6 1.2z" fill="none" stroke={C.mint} strokeWidth="1.5" />
+      <path d="M12 2l2.4 3.2L18 4l.8 3.8L22 10l-2.4 2 .8 4-3.8-.4L14 18l-2-3.2L10 18l-2.6-2.4-3.8.4.8-4L2 10l3.2-2.2L6 4l3.6 1.2z" fill="#1FAE63" opacity="0.2" />
+      <path d="M12 2l2.4 3.2L18 4l.8 3.8L22 10l-2.4 2 .8 4-3.8-.4L14 18l-2-3.2L10 18l-2.6-2.4-3.8.4.8-4L2 10l3.2-2.2L6 4l3.6 1.2z" fill="none" stroke="#1FAE63" strokeWidth="1.5" />
       <polyline points="8.5 12 11 14.5 15.5 9.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
@@ -206,13 +206,13 @@ function BadgeCheck() {
 // ── Stock badge ──
 function StockBadge({ stock }: { stock: number | null }) {
   if (stock === 0) return (
-    <span style={{ background: C.surfaceSoft, color: C.mute, fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 4, textTransform: 'uppercase' as const, letterSpacing: '0.05em' }}>Sold out</span>
+    <span style={{ background: '#EFEDE7', color: '#76777E', fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 4, textTransform: 'uppercase' as const, letterSpacing: '0.05em' }}>Sold out</span>
   );
   if (stock !== null && stock <= 5) return (
-    <span style={{ background: C.signalSoft, color: C.signal, fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 4, textTransform: 'uppercase' as const, letterSpacing: '0.05em' }}>{stock} left</span>
+    <span style={{ background: 'rgba(255,77,46,0.12)', color: '#FF4D2E', fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 4, textTransform: 'uppercase' as const, letterSpacing: '0.05em' }}>{stock} left</span>
   );
   return (
-    <span style={{ background: C.mintSoft, color: C.mint, fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 4, textTransform: 'uppercase' as const, letterSpacing: '0.05em' }}>In stock</span>
+    <span style={{ background: 'rgba(31,174,99,0.12)', color: '#1FAE63', fontSize: 10, fontWeight: 700, padding: '3px 8px', borderRadius: 4, textTransform: 'uppercase' as const, letterSpacing: '0.05em' }}>In stock</span>
   );
 }
 
@@ -241,7 +241,7 @@ export default function StoreClient({ store, username }: { store: Store; usernam
   const [error, setError] = useState('');
 
   const C = getTheme((store as any).template || 'clean');
-  const primary = store.theme?.primary || C.signal;
+  const primary = store.theme?.primary || '#FF4D2E';
   const tint = hexToRgba(primary, 0.14);
   const initial = store.name?.[0]?.toUpperCase() || 'S';
   const [avgRating, setAvgRating] = useState(0);
@@ -545,7 +545,7 @@ export default function StoreClient({ store, username }: { store: Store; usernam
                     </div>
                     <span style={{ fontFamily: "'JetBrains Mono', monospace", color: C.bone, fontWeight: 700, fontSize: 15 }}>₦{product.price.toLocaleString()}</span>
                     {soldOut ? (
-                      <button disabled style={{ width: '100%', padding: '9px', background: C.surfaceSoft, color: C.mute, border: 'none', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'not-allowed' }}>Unavailable</button>
+                      <button disabled style={{ width: '100%', padding: '9px', background: '#EFEDE7', color: '#76777E', border: 'none', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'not-allowed' }}>Unavailable</button>
                     ) : qty > 0 ? (
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: C.surfaceSoft, borderRadius: 8, overflow: 'hidden' }}>
                         <button onClick={() => setQty(product.id, qty - 1)} style={{ padding: '9px 14px', background: 'none', border: 'none', cursor: 'pointer', color: C.bone, display: 'flex' }}><IconMinus /></button>
