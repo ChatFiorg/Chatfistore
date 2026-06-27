@@ -578,6 +578,38 @@ export default function StoreClient({ store, username }: { store: Store; usernam
         </div>
       )}
 
+      {/* ── Footer ── */}
+      <footer style={{ borderTop: `1px solid ${C.divider}`, background: C.surface, padding: '28px 16px 40px', marginTop: 32 }}>
+        <div style={{ maxWidth: 1000, margin: '0 auto' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+            {store.logo ? (
+              <img src={store.logo} alt="" style={{ width: 36, height: 36, borderRadius: 8, objectFit: 'cover' }} />
+            ) : (
+              <div style={{ width: 36, height: 36, borderRadius: 8, background: C.ink, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: "'Bebas Neue', sans-serif", fontSize: 16, color: primary }}>{initial}</div>
+            )}
+            <span style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 18, color: C.bone, letterSpacing: '0.03em' }}>{store.name}</span>
+          </div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
+            {store.contact?.whatsapp && (
+              <a href={`https://wa.me/${store.contact.whatsapp.replace(/\D/g, '')}`} target="_blank" style={{ display: 'flex', alignItems: 'center', gap: 6, background: C.ink, color: C.bone, padding: '7px 14px', borderRadius: 20, fontSize: 13, fontWeight: 600, textDecoration: 'none', border: `1px solid ${C.divider}` }}>
+                <IconChat size={14} /> WhatsApp
+              </a>
+            )}
+            {store.contact?.email && (
+              <a href={`mailto:${store.contact.email}`} style={{ display: 'flex', alignItems: 'center', gap: 6, background: C.ink, color: C.bone, padding: '7px 14px', borderRadius: 20, fontSize: 13, fontWeight: 600, textDecoration: 'none', border: `1px solid ${C.divider}` }}>
+                <IconMail size={14} /> Email
+              </a>
+            )}
+            {store.contact?.twitter && (
+              <a href={`https://twitter.com/${store.contact.twitter.replace('@', '')}`} target="_blank" style={{ display: 'flex', alignItems: 'center', gap: 6, background: C.ink, color: C.bone, padding: '7px 14px', borderRadius: 20, fontSize: 13, fontWeight: 600, textDecoration: 'none', border: `1px solid ${C.divider}` }}>
+                <IconX size={14} /> {store.contact.twitter}
+              </a>
+            )}
+          </div>
+          <p style={{ color: C.mute, fontSize: 12, margin: 0 }}>Powered by <a href="https://chatfi.pro" style={{ color: primary, textDecoration: 'none', fontWeight: 600 }}>ChatFi</a></p>
+        </div>
+      </footer>
+
       {/* ── Checkout sheet ── */}
       {selectedProduct && (
         <div onClick={closeSheet} style={{ position: 'fixed', inset: 0, backgroundColor: sheetVisible ? 'rgba(0,0,0,0.5)' : 'rgba(0,0,0,0)', transition: 'background-color 0.28s ease', zIndex: 50 }}>
