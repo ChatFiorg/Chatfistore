@@ -228,6 +228,11 @@ export default function StoreClient({ store, username }: { store: Store; usernam
   const [ratingCount, setRatingCount] = useState(0);
   const [userRating, setUserRating] = useState(0);
   const [ratingSubmitted, setRatingSubmitted] = useState(false);
+  const [ratingModalOpen, setRatingModalOpen] = useState(false);
+  const [ratingModalVisible, setRatingModalVisible] = useState(false);
+
+  const openRatingModal = () => { setRatingModalOpen(true); requestAnimationFrame(() => setRatingModalVisible(true)); };
+  const closeRatingModal = () => { setRatingModalVisible(false); setTimeout(() => setRatingModalOpen(false), 280); };
 
   useEffect(() => {
     const fetchRatings = async () => {
@@ -461,24 +466,31 @@ export default function StoreClient({ store, username }: { store: Store; usernam
         </div>
 
 
-        {/* Rate this store */}
-        <div style={{ marginBottom: 20, padding: '14px 16px', background: C.surface, borderRadius: 10, border: `1px solid ${C.divider}` }}>
-          <p style={{ margin: '0 0 10px', fontSize: 12, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            {ratingSubmitted ? `Thanks! You rated ${userRating}★  (${ratingCount} ratings)` : `Rate this store (${ratingCount} ratings)`}
-          </p>
-          <div style={{ display: 'flex', gap: 6 }}>
-            {[1,2,3,4,5].map(star => (
-              <button key={star} onClick={() => submitRating(star)} disabled={ratingSubmitted}
-                style={{ background: 'none', border: 'none', cursor: ratingSubmitted ? 'default' : 'pointer', padding: 2 }}>
-                <svg width="28" height="28" viewBox="0 0 24 24"
-                  fill={star <= (ratingSubmitted ? userRating : 0) ? '#FFC24D' : 'none'}
-                  stroke="#FFC24D" strokeWidth="1.5">
+        {/* Tap to rate */}
+        {!ratingSubmitted && (
+          <button onClick={openRatingModal} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20, padding: '10px 16px', background: C.surface, borderRadius: 10, border: `1px solid ${C.divider}`, cursor: 'pointer', width: '100%' }}>
+            <div style={{ display: 'flex', gap: 3 }}>
+              {[1,2,3,4,5].map(s => (
+                <svg key={s} width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FFC24D" strokeWidth="1.5">
                   <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                 </svg>
-              </button>
-            ))}
+              ))}
+            </div>
+            <span style={{ fontSize: 13, fontWeight: 600, color: C.mute }}>Rate this store · {ratingCount} ratings</span>
+          </button>
+        )}
+        {ratingSubmitted && (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20, padding: '10px 16px', background: C.mintSoft, borderRadius: 10, border: `1px solid ${C.divider}` }}>
+            <div style={{ display: 'flex', gap: 3 }}>
+              {[1,2,3,4,5].map(s => (
+                <svg key={s} width="18" height="18" viewBox="0 0 24 24" fill={s <= userRating ? '#FFC24D' : 'none'} stroke="#FFC24D" strokeWidth="1.5">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+              ))}
+            </div>
+            <span style={{ fontSize: 13, fontWeight: 600, color: C.mint }}>Thanks for rating!</span>
           </div>
-        </div>
+        )}
 
         {/* Products header */}
         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12 }}>
