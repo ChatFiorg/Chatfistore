@@ -544,12 +544,6 @@ export default function StoreClient({ store, username }: { store: Store; usernam
           </div>
         )}
 
-        {/* Footer */}
-        <div style={{ textAlign: 'center', paddingBottom: 28, borderTop: `1px solid ${C.divider}`, paddingTop: 20 }}>
-          <a href="https://chatfi.pro" target="_blank" style={{ color: C.mute, fontSize: 12, textDecoration: 'none' }}>
-            Powered by <span style={{ color: C.bone, fontWeight: 700 }}>ChatFi</span>
-          </a>
-        </div>
       </div>
 
       {/* ── Floating cart bar ── */}
