@@ -149,7 +149,7 @@ export default function ComboTemplate({ store, username }: { store: Store; usern
     setBuying(true); setError('');
     const fullAddress = [houseNo.trim(), street.trim(), addrLga, addrState].filter(Boolean).join(', ');
     try {
-      const res = await fetch(`${BASE_URL}/store/${username}/charge`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ productId: selectedProduct.id, quantity, buyerName: buyerName.trim(), buyerPhone: buyerPhone.trim(), deliveryAddress: fullAddress, email: email.trim() || undefined }) });
+      const res = await fetch(`/api/charge`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, productId: selectedProduct.id, quantity, buyerName: buyerName.trim(), buyerPhone: buyerPhone.trim(), deliveryAddress: fullAddress, email: email.trim() || undefined }) });
       const data = await res.json();
       if (data.paymentLink) setPaymentLink(data.paymentLink);
       else setError(data.error || 'Failed to create payment');
