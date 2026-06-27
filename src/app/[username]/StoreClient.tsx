@@ -399,10 +399,10 @@ export default function StoreClient({ store, username }: { store: Store; usernam
           <p style={{ fontFamily: "'Bebas Neue', sans-serif", fontSize: 16, letterSpacing: '0.04em', color: C.bone, margin: 0 }}>{store.name.toUpperCase()}</p>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 'auto' }}>
-          <button aria-label="Search" style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.bone, background: scrolled ? 'transparent' : 'rgba(255,255,255,0.55)', backdropFilter: scrolled ? 'none' : 'blur(4px)' }}>
+          <button aria-label="Search" onClick={() => { const el = document.getElementById('store-search'); if (el) { el.scrollIntoView({ behavior: 'smooth' }); el.focus(); } }} style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.bone, background: scrolled ? 'transparent' : 'rgba(255,255,255,0.55)', backdropFilter: scrolled ? 'none' : 'blur(4px)' }}>
             <IconSearch />
           </button>
-          <button onClick={() => itemCount > 0 && setCartOpen(true)} aria-label="Cart" style={{ position: 'relative', width: 36, height: 36, borderRadius: '50%', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.bone, background: scrolled ? 'transparent' : 'rgba(255,255,255,0.55)', backdropFilter: scrolled ? 'none' : 'blur(4px)' }}>
+          <button onClick={() => setCartOpen(true)} aria-label="Cart" style={{ position: 'relative', width: 36, height: 36, borderRadius: '50%', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.bone, background: scrolled ? 'transparent' : 'rgba(255,255,255,0.55)', backdropFilter: scrolled ? 'none' : 'blur(4px)' }}>
             <IconBag size={18} color={C.bone} />
             {itemCount > 0 && <span style={{ position: 'absolute', top: 1, right: 1, width: 16, height: 16, borderRadius: '50%', background: C.signal, color: '#fff', fontSize: 10, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{itemCount}</span>}
           </button>
