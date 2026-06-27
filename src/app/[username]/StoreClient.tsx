@@ -1,6 +1,8 @@
 'use client';
 import { useState, useEffect, useMemo } from 'react';
 import { NIGERIA_STATES } from '@/lib/nigeria-states';
+import { db } from '@/lib/firebase';
+import { collection, addDoc, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
 
 const BASE_URL = 'https://pay.chatfi.pro/api';
 const STATE_NAMES = Object.keys(NIGERIA_STATES);
@@ -222,6 +224,43 @@ export default function StoreClient({ store, username }: { store: Store; usernam
   const primary = store.theme?.primary || C.signal;
   const tint = hexToRgba(primary, 0.14);
   const initial = store.name?.[0]?.toUpperCase() || 'S';
+  const [avgRating, setAvgRating] = useState(0);
+  const [ratingCount, setRatingCount] = useState(0);
+  const [userRating, setUserRating] = useState(0);
+  const [ratingSubmitted, setRatingSubmitted] = useState(false);
+
+  useEffect(() => {
+    const fetchRatings = async () => {
+      try {
+        const q = query(collection(db, 'store_ratings'), where('username', '==', username));
+        const snap = await getDocs(q);
+        if (!snap.empty) {
+          const ratings = snap.docs.map(d => d.data().rating as number);
+          const avg = ratings.reduce((a, b) => a + b, 0) / ratings.length;
+          setAvgRating(avg);
+          setRatingCount(ratings.length);
+        }
+      } catch (e) { console.error(e); }
+    };
+    fetchRatings();
+  }, [username]);
+
+  const submitRating = async (star: number) => {
+    if (ratingSubmitted) return;
+    setUserRating(star);
+    setRatingSubmitted(true);
+    try {
+      await addDoc(collection(db, 'store_ratings'), {
+        username,
+        rating: star,
+        createdAt: serverTimestamp(),
+      });
+      const newCount = ratingCount + 1;
+      const newAvg = (avgRating * ratingCount + star) / newCount;
+      setAvgRating(newAvg);
+      setRatingCount(newCount);
+    } catch (e) { console.error(e); }
+  };
 
   useEffect(() => {
     const el = document.getElementById('store-scroll');
@@ -408,8 +447,7 @@ export default function StoreClient({ store, username }: { store: Store; usernam
         {/* Trust signals */}
         <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: `1px solid ${C.divider}`, background: C.surface, marginBottom: 16 }}>
           {[
-            { icon: <IconStar />, value: '4.8', label: 'Rating' },
-            { icon: <IconPackage />, value: '120+', label: 'Orders' },
+            { icon: <IconStar />, value: avgRating > 0 ? avgRating.toFixed(1) : '—', label: 'Rating' },
             { icon: <IconClock />, value: '<1hr', label: 'Replies' },
           ].map((s, i) => (
             <div key={s.label} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '12px 0', borderLeft: i > 0 ? `1px solid ${C.divider}` : 'none' }}>
@@ -422,23 +460,24 @@ export default function StoreClient({ store, username }: { store: Store; usernam
           ))}
         </div>
 
-        {/* Contact buttons */}
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 24 }}>
-          {store.contact?.whatsapp && (
-            <a href={`https://wa.me/${store.contact.whatsapp.replace(/\D/g, '')}`} target="_blank" style={{ display: 'flex', alignItems: 'center', gap: 6, background: C.ink, color: C.bone, padding: '7px 14px', borderRadius: 20, fontSize: 13, fontWeight: 600, textDecoration: 'none', border: `1px solid ${C.divider}` }}>
-              <IconChat /> WhatsApp
-            </a>
-          )}
-          {store.contact?.email && (
-            <a href={`mailto:${store.contact.email}`} style={{ display: 'flex', alignItems: 'center', gap: 6, background: C.ink, color: C.bone, padding: '7px 14px', borderRadius: 20, fontSize: 13, fontWeight: 600, textDecoration: 'none', border: `1px solid ${C.divider}` }}>
-              <IconMail /> Email
-            </a>
-          )}
-          {store.contact?.twitter && (
-            <a href={`https://twitter.com/${store.contact.twitter.replace('@', '')}`} target="_blank" style={{ display: 'flex', alignItems: 'center', gap: 6, background: C.ink, color: C.bone, padding: '7px 14px', borderRadius: 20, fontSize: 13, fontWeight: 600, textDecoration: 'none', border: `1px solid ${C.divider}` }}>
-              <IconX /> {store.contact.twitter}
-            </a>
-          )}
+
+        {/* Rate this store */}
+        <div style={{ marginBottom: 20, padding: '14px 16px', background: C.surface, borderRadius: 10, border: `1px solid ${C.divider}` }}>
+          <p style={{ margin: '0 0 10px', fontSize: 12, fontWeight: 700, color: C.mute, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            {ratingSubmitted ? `Thanks! You rated ${userRating}★  (${ratingCount} ratings)` : `Rate this store (${ratingCount} ratings)`}
+          </p>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {[1,2,3,4,5].map(star => (
+              <button key={star} onClick={() => submitRating(star)} disabled={ratingSubmitted}
+                style={{ background: 'none', border: 'none', cursor: ratingSubmitted ? 'default' : 'pointer', padding: 2 }}>
+                <svg width="28" height="28" viewBox="0 0 24 24"
+                  fill={star <= (ratingSubmitted ? userRating : 0) ? '#FFC24D' : 'none'}
+                  stroke="#FFC24D" strokeWidth="1.5">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Products header */}
