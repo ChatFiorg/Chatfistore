@@ -82,21 +82,7 @@ function getTheme(template: string) {
   };
 }
 
-const C_BASE = {
-  bg: '#fafafa',
-  ink: '#FFFFFF',
-  surface: '#F7F6F2',
-  surfaceSoft: '#EFEDE7',
-  divider: '#E4E2DC',
-  bone: '#15161A',
-  mute: '#76777E',
-  signal: '#FF4D2E',
-  signalSoft: 'rgba(255,77,46,0.12)',
-  mint: '#1FAE63',
-  mintSoft: 'rgba(31,174,99,0.12)',
-  divider: '#E4E2DC',
-  bg: '#fafafa',
-};
+
 
 const FONTS = `
   @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap');
