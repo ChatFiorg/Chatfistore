@@ -1,7 +1,9 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { NIGERIA_STATES } from '@/lib/nigeria-states';
 
 const BASE_URL = 'https://pay.chatfi.pro/api';
+const STATE_NAMES = Object.keys(NIGERIA_STATES);
 
 interface Product {
   id: string;
@@ -107,15 +109,29 @@ function IconPlus({ size = 16 }: { size?: number }) {
   );
 }
 
+function IconPin({ size = 14 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
+  );
+}
+
 export default function StoreClient({ store, username }: { store: Store; username: string }) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [sheetVisible, setSheetVisible] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const [buyerName, setBuyerName] = useState('');
   const [buyerPhone, setBuyerPhone] = useState('');
-  const [buyerAddress, setBuyerAddress] = useState('');
+  const [addrState, setAddrState] = useState('');
+  const [addrLga, setAddrLga] = useState('');
+  const [street, setStreet] = useState('');
+  const [houseNo, setHouseNo] = useState('');
   const [email, setEmail] = useState('');
   const [buying, setBuying] = useState(false);
+  const [detecting, setDetecting] = useState(false);
+  const [locationError, setLocationError] = useState('');
   const [paymentLink, setPaymentLink] = useState('');
   const [error, setError] = useState('');
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
@@ -134,10 +150,14 @@ export default function StoreClient({ store, username }: { store: Store; usernam
     setQuantity(1);
     setBuyerName('');
     setBuyerPhone('');
-    setBuyerAddress('');
+    setAddrState('');
+    setAddrLga('');
+    setStreet('');
+    setHouseNo('');
     setEmail('');
     setPaymentLink('');
     setError('');
+    setLocationError('');
     setSelectedProduct(product);
   };
 
@@ -149,14 +169,50 @@ export default function StoreClient({ store, username }: { store: Store; usernam
   const maxQty = selectedProduct?.stock ?? Infinity;
   const total = selectedProduct ? selectedProduct.price * quantity : 0;
 
+  const handleDetectLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationError('Location not supported on this browser');
+      return;
+    }
+    setDetecting(true);
+    setLocationError('');
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const { latitude, longitude } = pos.coords;
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`);
+          const data = await res.json();
+          const addr = data?.address || {};
+          const detectedState = addr.state || '';
+          const matchedState = STATE_NAMES.find(s =>
+            detectedState.toLowerCase().includes(s.toLowerCase()) || s.toLowerCase().includes(detectedState.toLowerCase())
+          );
+          if (matchedState) setAddrState(matchedState);
+          const roadPart = [addr.road, addr.suburb || addr.neighbourhood].filter(Boolean).join(', ');
+          if (roadPart) setStreet(roadPart);
+          if (!matchedState) setLocationError('Detected your location, but please confirm State/LGA below');
+        } catch {
+          setLocationError('Could not detect address — please fill manually');
+        } finally {
+          setDetecting(false);
+        }
+      },
+      () => {
+        setLocationError('Location permission denied — please fill manually');
+        setDetecting(false);
+      }
+    );
+  };
+
   const confirmBuy = async () => {
     if (!selectedProduct) return;
-    if (!buyerName.trim() || !buyerPhone.trim() || !buyerAddress.trim()) {
-      setError('Please fill in your name, phone, and delivery address');
+    if (!buyerName.trim() || !buyerPhone.trim() || !addrState || !addrLga || !street.trim()) {
+      setError('Please fill in your name, phone, state, LGA, and street address');
       return;
     }
     setBuying(true);
     setError('');
+    const fullAddress = [houseNo.trim(), street.trim(), addrLga, addrState].filter(Boolean).join(', ');
     try {
       const res = await fetch(`${BASE_URL}/store/${username}/charge`, {
         method: 'POST',
@@ -166,7 +222,7 @@ export default function StoreClient({ store, username }: { store: Store; usernam
           quantity,
           buyerName: buyerName.trim(),
           buyerPhone: buyerPhone.trim(),
-          buyerAddress: buyerAddress.trim(),
+          buyerAddress: fullAddress,
           buyerEmail: email.trim() || null,
         }),
       });
@@ -180,6 +236,8 @@ export default function StoreClient({ store, username }: { store: Store; usernam
     }
   };
 
+  const lgaOptions = addrState ? NIGERIA_STATES[addrState] || [] : [];
+
   return (
     <div style={{ backgroundColor: '#fafafa', minHeight: '100vh', fontFamily: 'system-ui, sans-serif' }}>
       <style jsx>{`
@@ -192,6 +250,7 @@ export default function StoreClient({ store, username }: { store: Store; usernam
         .product-card:hover img { transform: scale(1.04); }
         .sheet-field { width: 100%; padding: 12px; background-color: #fafafa; color: #111; border: 1px solid #e5e5e5; border-radius: 10px; font-size: 14px; box-sizing: border-box; font-family: inherit; }
         .sheet-field:focus { outline: none; border-color: #111; }
+        select.sheet-field { appearance: none; -webkit-appearance: none; }
       `}</style>
 
       {store.banner && (
@@ -385,7 +444,29 @@ export default function StoreClient({ store, username }: { store: Store; usernam
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 4 }}>
                   <input className="sheet-field" placeholder="Full name" value={buyerName} onChange={e => setBuyerName(e.target.value)} />
                   <input className="sheet-field" placeholder="Phone number" type="tel" value={buyerPhone} onChange={e => setBuyerPhone(e.target.value)} />
-                  <textarea className="sheet-field" placeholder="Delivery address" value={buyerAddress} onChange={e => setBuyerAddress(e.target.value)} rows={2} style={{ resize: 'none' }} />
+
+                  <button
+                    type="button"
+                    onClick={handleDetectLocation}
+                    disabled={detecting}
+                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, padding: '10px', backgroundColor: '#fff', border: '1px dashed #ccc', borderRadius: 10, color: '#111', fontSize: 13, fontWeight: 600, cursor: detecting ? 'not-allowed' : 'pointer' }}
+                  >
+                    <IconPin size={13} /> {detecting ? 'Detecting location...' : 'Use my location'}
+                  </button>
+                  {locationError && <p style={{ color: '#d97706', fontSize: 12, margin: 0 }}>{locationError}</p>}
+
+                  <select className="sheet-field" value={addrState} onChange={e => { setAddrState(e.target.value); setAddrLga(''); }}>
+                    <option value="">Select state</option>
+                    {STATE_NAMES.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+
+                  <select className="sheet-field" value={addrLga} onChange={e => setAddrLga(e.target.value)} disabled={!addrState}>
+                    <option value="">{addrState ? 'Select LGA' : 'Select state first'}</option>
+                    {lgaOptions.map(l => <option key={l} value={l}>{l}</option>)}
+                  </select>
+
+                  <input className="sheet-field" placeholder="Street address" value={street} onChange={e => setStreet(e.target.value)} />
+                  <input className="sheet-field" placeholder="House No. (optional)" value={houseNo} onChange={e => setHouseNo(e.target.value)} />
                   <input className="sheet-field" placeholder="Email (optional)" type="email" value={email} onChange={e => setEmail(e.target.value)} />
                 </div>
 
