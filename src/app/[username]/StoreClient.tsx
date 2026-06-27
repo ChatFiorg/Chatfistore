@@ -76,26 +76,13 @@ const FONTS = `
 
 // ── Icons ──
 function IconChat({ size = 16 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 175.216 175.552" xmlns="http://www.w3.org/2000/svg">
-      <path d="M87.608 0C39.316 0 0 39.316 0 87.608c0 15.237 3.932 29.569 10.854 42.03L.676 174.431l46.496-9.945A87.36 87.36 0 0 0 87.608 175.2c48.292 0 87.608-39.316 87.608-87.592C175.216 39.316 135.9 0 87.608 0z" fill="#25D366"/>
-      <path d="M128.82 107.763c-1.95-3.254-4.877-5.203-8.13-6.503-3.254-1.3-13.007-6.503-15.606-7.153-2.6-.65-4.553-.975-6.503 1.95-1.95 2.925-7.478 8.778-9.103 10.728-1.625 1.95-3.578 2.275-6.503.975-2.925-1.3-12.357-4.553-23.535-14.631-8.68-7.803-14.631-17.556-16.256-20.48-1.625-2.925-.325-4.553 1.3-6.178 1.3-1.3 2.925-3.578 4.228-5.203 1.3-1.625 1.625-2.925.975-4.553-.65-1.625-6.503-15.606-8.778-21.134-2.275-5.528-4.878-4.553-6.503-4.553-1.625 0-3.578-.325-5.528-.325s-5.203.65-7.803 3.578c-2.6 2.925-9.753 9.103-9.753 22.11s9.428 25.81 10.728 27.435c1.3 1.625 18.531 29.36 46.29 39.763 27.76 10.403 27.76 6.828 32.638 6.503 4.878-.325 15.606-6.178 17.881-12.357 2.275-5.853 2.275-10.728 1.625-11.703z" fill="#fff"/>
-    </svg>
-  );
+  return <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width={size} height={size} alt="WhatsApp" style={{ display: 'block' }} />;
 }
 function IconMail({ size = 16 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z" fill="#EA4335"/>
-    </svg>
-  );
+  return <img src="https://upload.wikimedia.org/wikipedia/commons/7/7e/Gmail_icon_%282020%29.svg" width={size} height={size} alt="Gmail" style={{ display: 'block' }} />;
 }
 function IconX({ size = 14 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" fill="#000"/>
-    </svg>
-  );
+  return <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/X_icon_2.svg" width={size} height={size} alt="X" style={{ display: 'block' }} />;
 }
 function IconBag({ size = 16, color = '#fff' }: { size?: number; color?: string }) {
   return (
