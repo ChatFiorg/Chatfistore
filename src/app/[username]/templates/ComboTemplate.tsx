@@ -6,7 +6,7 @@ const BASE_URL = 'https://pay.chatfi.pro/api';
 const STATE_NAMES = Object.keys(NIGERIA_STATES);
 
 interface Product { id: string; name: string; description: string; price: number; image: string; stock: number | null; active: boolean; }
-interface Store { username: string; name: string; description: string; logo: string; banner: string; category: string; theme: { primary: string; bg: string }; contact: { whatsapp?: string; email?: string; twitter?: string }; products: Product[]; }
+interface Store { username: string; name: string; description: string; logo: string; banner: string; category: string; theme: { primary: string; bg: string }; contact: { whatsapp?: string; phone?: string; email?: string; twitter?: string }; products: Product[]; }
 interface CartItem { product: Product; qty: number; }
 
 const naira = (n: number) => `₦${Number(n).toLocaleString('en-NG')}`;
