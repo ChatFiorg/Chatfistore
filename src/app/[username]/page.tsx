@@ -14,6 +14,10 @@ export async function generateMetadata({ params }: { params: Promise<{ username:
       title: store.name,
       description: store.description || `Shop at ${store.name} on ChatFi Store`,
       openGraph: { title: store.name, description: store.description, images: store.banner ? [store.banner] : [] },
+      icons: {
+        icon: store.logo || '/favicon.ico',
+        apple: store.logo || '/favicon.ico',
+      },
     };
   } catch {
     return { title: 'ChatFi Store' };
