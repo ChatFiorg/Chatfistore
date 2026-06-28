@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "81e184de-f310-491d-9aa7-d3332e710157"
+      }
+    },
+    "android": {
+      "package": "com.cheridum.chatfistore"
+    }
+  }
+}
