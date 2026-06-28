@@ -29,6 +29,7 @@ export default function ComboTemplate({ store, username }: { store: Store; usern
   const primary = store.theme?.primary || '#E53E3E';
   const [cart, setCart] = useState<Record<string, number>>({});
   const [search, setSearch] = useState('');
+  const [filter, setFilter] = useState<'all' | 'instock' | 'low'>('all');
   const [modal, setModal] = useState<'cart' | 'delivery' | 'success' | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [productModal, setProductModal] = useState(false);
@@ -46,7 +47,13 @@ export default function ComboTemplate({ store, username }: { store: Store; usern
 
   const setQty = (id: string, qty: number) => setCart(c => qty <= 0 ? { ...c, [id]: 0 } : { ...c, [id]: qty });
 
-  const filtered = store.products.filter(p => p.active && (!search || p.name.toLowerCase().includes(search.toLowerCase())));
+  const filtered = store.products.filter(p => {
+    if (!p.active) return false;
+    if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
+    if (filter === 'instock' && p.stock === 0) return false;
+    if (filter === 'low' && !(p.stock !== null && p.stock !== undefined && p.stock > 0 && p.stock <= 3)) return false;
+    return true;
+  });
 
   const detectLocation = () => {
     setDetecting(true);
@@ -121,11 +128,10 @@ export default function ComboTemplate({ store, username }: { store: Store; usern
           </a>
 
           {/* Search */}
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', backgroundColor: '#f5f5f5', borderRadius: 8, padding: '0 12px', border: '1px solid #e5e5e5', gap: 8 }}>
-            <IconSearch size={18} />
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search products..." style={{ flex: 1, border: 'none', outline: 'none', backgroundColor: 'transparent', fontSize: 14, padding: '10px 0', color: '#111' }} />
+          <div style={{ flex: 1, minWidth: 0, maxWidth: 220, display: 'flex', alignItems: 'center', backgroundColor: '#f5f5f5', borderRadius: 8, padding: '0 10px', border: '1px solid #e5e5e5', gap: 6 }}>
+            <IconSearch size={16} />
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." style={{ flex: 1, minWidth: 0, width: '100%', border: 'none', outline: 'none', backgroundColor: 'transparent', fontSize: 13, padding: '9px 0', color: '#111' }} />
           </div>
-
           {/* Cart */}
           <button onClick={() => setModal('cart')} style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 8, backgroundColor: primary, color: '#fff', border: 'none', borderRadius: 8, padding: '10px 16px', cursor: 'pointer', fontWeight: 600, fontSize: 14, flexShrink: 0 }}>
             <IconCart size={18} />
@@ -139,9 +145,13 @@ export default function ComboTemplate({ store, username }: { store: Store; usern
         {/* Category nav */}
         <div style={{ borderTop: '1px solid #f0f0f0', backgroundColor: '#fff' }}>
           <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 16px', display: 'flex', gap: 0, overflowX: 'auto' }}>
-            {['All', 'In Stock', 'Low Stock'].map(cat => (
-              <button key={cat} style={{ padding: '10px 16px', border: 'none', backgroundColor: 'transparent', fontSize: 13, fontWeight: 600, color: '#555', cursor: 'pointer', whiteSpace: 'nowrap', borderBottom: cat === 'All' ? `2px solid ${primary}` : '2px solid transparent' }}>
-                {cat}
+            {[
+              { key: 'all' as const, label: 'All' },
+              { key: 'instock' as const, label: 'In Stock' },
+              { key: 'low' as const, label: 'Low Stock' },
+            ].map(({ key, label }) => (
+              <button key={key} onClick={() => setFilter(key)} style={{ padding: '10px 16px', border: 'none', backgroundColor: 'transparent', fontSize: 13, fontWeight: 600, color: filter === key ? '#111' : '#555', cursor: 'pointer', whiteSpace: 'nowrap', borderBottom: filter === key ? `2px solid ${primary}` : '2px solid transparent' }}>
+                {label}
               </button>
             ))}
           </div>
