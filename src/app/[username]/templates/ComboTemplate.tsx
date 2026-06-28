@@ -169,27 +169,6 @@ export default function ComboTemplate({ store, username }: { store: Store; usern
           </div>
         )}
 
-        {/* STORE INFO ROW */}
-        <div style={{ display: 'flex', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
-          <div style={{ flex: 1, minWidth: 200, backgroundColor: '#fff', borderRadius: 10, padding: 14, border: '1px solid #e5e5e5', display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#111' }}>Contact Us</div>
-            {store.contact?.email && (
-              <a href={`mailto:${store.contact.email}`} style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#555', textDecoration: 'none', fontSize: 13 }}>
-                <IconMail /> {store.contact.email}
-              </a>
-            )}
-            {store.contact?.phone && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#555', fontSize: 13 }}>
-                <IconPhone /> {(store.contact as any).phone}
-              </div>
-            )}
-          </div>
-          <div style={{ flex: 1, minWidth: 200, backgroundColor: '#fff', borderRadius: 10, padding: 14, border: '1px solid #e5e5e5' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: '#111', marginBottom: 6 }}>About</div>
-            <div style={{ fontSize: 13, color: '#555', lineHeight: 1.6 }}>{store.description || `Welcome to ${store.name}`}</div>
-          </div>
-        </div>
-
         {/* PRODUCTS HEADER */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
           <div style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>
