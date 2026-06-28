@@ -62,23 +62,27 @@ export default function ComboTemplate({ store, username }: { store: Store; usern
   };
 
   const checkout = async () => {
-    if (!form.name || !form.phone || !form.street) { setError('Please fill all required fields'); return; }
+    if (!form.name || !form.phone || !form.state || !form.lga || !form.street) {
+      setError('Please fill in your name, phone, state, LGA, and street address');
+      return;
+    }
     setPaying(true); setError('');
+    const fullAddress = [form.house, form.street, form.lga, form.state].filter(Boolean).join(', ');
     try {
-      const links: string[] = [];
-      for (const item of cartItems) {
-        for (let i = 0; i < item.qty; i++) {
-          const res = await fetch(`${BASE_URL}/store/${username}/charge`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ productId: item.product.id, buyerDelivery: form }),
-          });
-          const data = await res.json();
-          if (data.error) throw new Error(data.error);
-          links.push(data.paymentLink);
-        }
-      }
-      setPayLink(links[0]);
+      const res = await fetch(`${BASE_URL}/store/${username}/charge`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: cartItems.map(({ product, qty }) => ({ productId: product.id, quantity: qty })),
+          buyerName: form.name,
+          buyerPhone: form.phone,
+          buyerAddress: fullAddress,
+          buyerEmail: form.email || null,
+        }),
+      });
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      setPayLink(data.paymentLink);
       setModal('success');
     } catch (e: any) {
       setError(e.message || 'Failed to create payment');
@@ -88,7 +92,7 @@ export default function ComboTemplate({ store, username }: { store: Store; usern
   const lgas = form.state ? (NIGERIA_STATES as any)[form.state] || [] : [];
 
   return (
-    <div style={{ backgroundColor: '#f5f5f5', minHeight: '100vh', fontFamily: 'Inter, system-ui, sans-serif', color: '#111' }}>
+    <div style={{ backgroundColor: '#f5f5f5', minHeight: '100dvh', paddingBottom: 72, fontFamily: 'Inter, system-ui, sans-serif', color: '#111' }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -97,19 +101,6 @@ export default function ComboTemplate({ store, username }: { store: Store; usern
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .pcard:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); transform: translateY(-2px); transition: all 0.2s; }
       `}</style>
-
-      {/* TOP BAR */}
-      <div style={{ backgroundColor: primary, color: '#fff', fontSize: 12, padding: '6px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <IconPin size={12} />
-          <span>Nigeria · Free delivery on orders above ₦50,000</span>
-        </div>
-        {store.contact?.whatsapp && (
-          <a href={`https://wa.me/${store.contact.whatsapp.replace(/\D/g, '')}`} target="_blank" style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#fff', textDecoration: 'none', fontSize: 12 }}>
-            <IconWhatsApp /> Chat with us
-          </a>
-        )}
-      </div>
 
       {/* HEADER */}
       <div style={{ backgroundColor: '#fff', borderBottom: '1px solid #e5e5e5', position: 'sticky', top: 0, zIndex: 30 }}>
@@ -270,7 +261,6 @@ export default function ComboTemplate({ store, username }: { store: Store; usern
           { icon: <IconHome />, label: 'Home', action: () => {} },
           { icon: <IconTag />, label: 'Products', action: () => {} },
           { icon: <IconCart />, label: `Cart${itemCount > 0 ? ` (${itemCount})` : ''}`, action: () => setModal('cart') },
-          { icon: <IconUser />, label: 'Account', action: () => {} },
         ].map(({ icon, label, action }) => (
           <button key={label} onClick={action} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '8px 4px', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', color: label.startsWith('Cart') && itemCount > 0 ? primary : '#888', fontSize: 10, fontWeight: 600 }}>
             {icon}
