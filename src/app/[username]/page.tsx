@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import StoreClient from './StoreClient';
 import DarkTemplate from './templates/DarkTemplate';
 import ComboTemplate from './templates/ComboTemplate';
+import MiniStoreTemplate from './templates/MiniStoreTemplate';
 
 const BASE_URL = 'https://pay.chatfi.pro/api';
 
@@ -39,6 +40,7 @@ export default async function StorePage({ params }: { params: Promise<{ username
     if (template === 'dark') return <DarkTemplate store={store} username={username} />;
 
     if (template === 'combo') return <ComboTemplate store={store} username={username} />;
+    if (template === 'ministore') return <MiniStoreTemplate store={store} username={username} />;
 
     // Clean — light minimal (default)
     return <StoreClient store={store} username={username} />;

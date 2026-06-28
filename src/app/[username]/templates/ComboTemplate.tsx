@@ -170,7 +170,7 @@ export default function ComboTemplate({ store, username }: { store: Store; usern
         )}
 
         {/* PRODUCTS HEADER */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+        <div id="products-section" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
           <div style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>
             {search ? `Results for "${search}"` : 'All Products'}
             <span style={{ fontSize: 13, fontWeight: 400, color: '#888', marginLeft: 8 }}>({filtered.length} items)</span>
@@ -250,8 +250,8 @@ export default function ComboTemplate({ store, username }: { store: Store; usern
       {/* MOBILE BOTTOM NAV */}
       <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, backgroundColor: '#fff', borderTop: '1px solid #e5e5e5', display: 'flex', zIndex: 20, paddingBottom: 'env(safe-area-inset-bottom)' }}>
         {[
-          { icon: <IconHome />, label: 'Home', action: () => {} },
-          { icon: <IconTag />, label: 'Products', action: () => {} },
+          { icon: <IconHome />, label: 'Home', action: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
+          { icon: <IconTag />, label: 'Products', action: () => document.getElementById('products-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' }) },
           { icon: <IconCart />, label: `Cart${itemCount > 0 ? ` (${itemCount})` : ''}`, action: () => setModal('cart') },
         ].map(({ icon, label, action }) => (
           <button key={label} onClick={action} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, padding: '8px 4px', border: 'none', backgroundColor: 'transparent', cursor: 'pointer', color: label.startsWith('Cart') && itemCount > 0 ? primary : '#888', fontSize: 10, fontWeight: 600 }}>
