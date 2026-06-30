@@ -409,7 +409,7 @@ export default function StoreClient({ store, username }: { store: Store; usernam
     const fullAddress = [houseNo.trim(), street.trim(), addrLga, addrState].filter(Boolean).join(', ');
     try {
       if (paymentMethod === 'naira') {
-        const callbackUrl = `https://${username}.chatfi.pro/order/${username}`;
+        const callbackUrl = `https://${username}.chatfi.pro/order`;
         const res = await fetch(`/api/charge-naira`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

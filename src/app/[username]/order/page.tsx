@@ -2,8 +2,8 @@
 import { use, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-export default function OrderConfirmedPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = use(params);
+export default function OrderConfirmedPage({ params }: { params: Promise<{ username: string }> }) {
+  const { username } = use(params);
   const searchParams = useSearchParams();
   const reference = searchParams.get('reference') || searchParams.get('trxref');
 
@@ -15,7 +15,7 @@ export default function OrderConfirmedPage({ params }: { params: Promise<{ slug:
     let attempts = 0;
     const poll = async () => {
       try {
-        const res = await fetch(`https://pay.chatfi.pro/api/store/${slug}/order-status?reference=${reference}`);
+        const res = await fetch(`https://pay.chatfi.pro/api/store/${username}/order-status?reference=${reference}`);
         const data = await res.json();
         if (data.status === 'paid') {
           setStatus('paid');
@@ -28,7 +28,7 @@ export default function OrderConfirmedPage({ params }: { params: Promise<{ slug:
       else setStatus('pending');
     };
     poll();
-  }, [reference, slug]);
+  }, [reference, username]);
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', backgroundColor: '#000', color: '#fff', padding: 24, textAlign: 'center', fontFamily: 'system-ui' }}>
