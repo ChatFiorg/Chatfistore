@@ -125,6 +125,26 @@ function IconBag({ size = 16, color = '#fff' }: { size?: number; color?: string 
     </svg>
   );
 }
+function IconNaira({ size = 16, color = '#111' }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 3v18" />
+      <path d="M19 3v18" />
+      <path d="M5 3l14 18" />
+      <path d="M3 9h18" />
+      <path d="M3 14h18" />
+    </svg>
+  );
+}
+function IconCoin({ size = 16, color = '#111' }: { size?: number; color?: string }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v10" />
+      <path d="M9.5 9.5c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.2c0 1.3-1 1.8-2.5 2.3s-2.5 1-2.5 2.3c0 1.1 1.1 2.2 2.5 2.2s2.5-1.1 2.5-2.5" />
+    </svg>
+  );
+}
 function IconSearch({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -238,6 +258,7 @@ export default function StoreClient({ store, username }: { store: Store; usernam
   const [detecting, setDetecting] = useState(false);
   const [locationError, setLocationError] = useState('');
   const [paymentLink, setPaymentLink] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState<'naira' | 'usdc'>('naira');  const [authorizationUrl, setAuthorizationUrl] = useState('');
   const [error, setError] = useState('');
 
   const C = getTheme((store as any).template || 'clean');
@@ -387,14 +408,26 @@ export default function StoreClient({ store, username }: { store: Store; usernam
     setBuying(true); setError('');
     const fullAddress = [houseNo.trim(), street.trim(), addrLga, addrState].filter(Boolean).join(', ');
     try {
-      const res = await fetch(`/api/charge`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, productId: selectedProduct.id, quantity, buyerName: buyerName.trim(), buyerPhone: buyerPhone.trim(), buyerAddress: fullAddress, buyerEmail: email.trim() || null }),
-      });
-      const data = await res.json();
-      if (data.error) throw new Error(data.error);
-      setPaymentLink(data.paymentLink);
+      if (paymentMethod === 'naira') {
+        const callbackUrl = `https://${username}.chatfi.pro/order/${username}`;
+        const res = await fetch(`/api/charge-naira`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, productId: selectedProduct.id, buyerName: buyerName.trim(), buyerPhone: buyerPhone.trim(), buyerDelivery: fullAddress, buyerEmail: email.trim() || `${buyerPhone.trim()}@chatfi.pro`, callbackUrl }),
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        setAuthorizationUrl(data.authorizationUrl);
+      } else {
+        const res = await fetch(`/api/charge`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, productId: selectedProduct.id, quantity, buyerName: buyerName.trim(), buyerPhone: buyerPhone.trim(), buyerAddress: fullAddress, buyerEmail: email.trim() || null }),
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        setPaymentLink(data.paymentLink);
+      }
     } catch (e: any) { setError(e.message || 'Failed to create payment'); }
     finally { setBuying(false); }
   };
@@ -681,11 +714,11 @@ export default function StoreClient({ store, username }: { store: Store; usernam
           <div onClick={e => e.stopPropagation()} style={{ position: 'fixed', left: 0, right: 0, bottom: 0, backgroundColor: '#fff', borderRadius: '20px 20px 0 0', maxHeight: '88vh', overflowY: 'auto', transform: sheetVisible ? 'translateY(0)' : 'translateY(100%)', transition: 'transform 0.28s ease', paddingBottom: 'calc(20px + env(safe-area-inset-bottom))', display: 'flex', flexDirection: 'column' }}>
             <div style={{ width: 36, height: 4, borderRadius: 2, backgroundColor: '#ddd', alignSelf: 'center', marginTop: 10, marginBottom: 4 }} />
             <button onClick={closeSheet} style={{ position: 'absolute', top: 14, right: 14, background: '#f4f4f4', border: 'none', borderRadius: '50%', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#666' }}><IconClose size={16} /></button>
-            {paymentLink ? (
+            {(paymentLink || authorizationUrl) ? (
               <div style={{ padding: '20px 22px' }}>
                 <h3 style={{ color: '#111', fontSize: 16, fontWeight: 800, margin: '0 0 6px' }}>Payment Ready</h3>
                 <p style={{ color: '#777', fontSize: 13, margin: '0 0 16px' }}>Tap below to complete your payment via ChatFi Pay</p>
-                <a href={paymentLink} target="_blank" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: '100%', padding: '14px', backgroundColor: C.signal, color: '#fff', borderRadius: 10, textAlign: 'center', fontWeight: 700, fontSize: 14, textDecoration: 'none', boxSizing: 'border-box' }}>
+                <a href={authorizationUrl || paymentLink} target="_blank" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, width: '100%', padding: '14px', backgroundColor: C.signal, color: '#fff', borderRadius: 10, textAlign: 'center', fontWeight: 700, fontSize: 14, textDecoration: 'none', boxSizing: 'border-box' }}>
                   <IconBag size={14} /> Pay ₦{checkoutTotal.toLocaleString()}
                 </a>
                 <button onClick={closeSheet} style={{ width: '100%', marginTop: 8, padding: '12px', backgroundColor: 'transparent', color: '#777', border: '1px solid #e5e5e5', borderRadius: 10, fontSize: 14, cursor: 'pointer' }}>Close</button>
@@ -734,6 +767,14 @@ export default function StoreClient({ store, username }: { store: Store; usernam
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 18, marginBottom: 10 }}>
                   <span style={{ color: '#777', fontSize: 13 }}>Total</span>
                   <span style={{ color: '#111', fontSize: 18, fontWeight: 800 }}>₦{checkoutTotal.toLocaleString()}</span>
+                </div>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+                  <button type="button" onClick={() => setPaymentMethod('naira')} style={{ flex: 1, padding: '10px', borderRadius: 10, border: paymentMethod === 'naira' ? `2px solid ${C.signal}` : '1px solid #e5e5e5', backgroundColor: paymentMethod === 'naira' ? '#fff7f5' : '#fff', color: '#111', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}><IconNaira size={13} /> Pay with Naira</span>
+                  </button>
+                  <button type="button" onClick={() => setPaymentMethod('usdc')} style={{ flex: 1, padding: '10px', borderRadius: 10, border: paymentMethod === 'usdc' ? `2px solid ${C.signal}` : '1px solid #e5e5e5', backgroundColor: paymentMethod === 'usdc' ? '#fff7f5' : '#fff', color: '#111', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+                    <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}><IconCoin size={13} /> Pay with USDC</span>
+                  </button>
                 </div>
                 <button onClick={confirmBuy} disabled={buying} style={{ width: '100%', padding: '14px', backgroundColor: C.signal, color: '#fff', borderRadius: 10, border: 'none', fontSize: 14, fontWeight: 700, cursor: buying ? 'not-allowed' : 'pointer', opacity: buying ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
                   {buying ? 'Creating payment...' : <><IconBag size={14} /> Proceed to Pay</>}
