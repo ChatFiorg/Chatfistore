@@ -20,7 +20,7 @@ export default function OrdersPage() {
     fetch(`/api/auth/me?username=${username}`)
       .then(res => res.json())
       .then(data => {
-        if (data.error) { router.push(`/${username}/auth`); return; }
+        if (data.error) { router.push('/auth'); return; }
         setOrders(data.orders || []);
       })
       .finally(() => setLoading(false));
@@ -30,7 +30,7 @@ export default function OrdersPage() {
 
   return (
     <div style={{ maxWidth: 480, margin: '0 auto', padding: '32px 20px' }}>
-      <Link href={`/${username}/account`} style={{ color: '#666', fontSize: 14 }}>‹ My Account</Link>
+      <Link href="/account" style={{ color: '#666', fontSize: 14 }}>‹ My Account</Link>
       <h1 style={{ fontSize: 20, fontWeight: 700, margin: '12px 0 20px' }}>My Orders</h1>
 
       {orders.length === 0 ? (

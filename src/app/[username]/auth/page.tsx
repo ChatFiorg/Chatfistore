@@ -45,7 +45,7 @@ export default function AuthPage() {
       });
       const data = await res.json();
       if (data.error) throw new Error(data.error);
-      router.push(`/${username}/account`);
+      router.push('/account');
     } catch (e: any) {
       setError(e.message || 'Invalid OTP');
     } finally {

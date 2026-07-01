@@ -24,7 +24,7 @@ export default function AccountPage() {
     fetch(`/api/auth/me?username=${username}`)
       .then(res => res.json())
       .then(data => {
-        if (data.error) { router.push(`/${username}/auth`); return; }
+        if (data.error) { router.push('/auth'); return; }
         setEmail(data.email);
         setAccount(data.account);
       })
@@ -37,7 +37,7 @@ export default function AccountPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username }),
     });
-    router.push(`/${username}`);
+    router.push('/');
   };
 
   if (loading) return <div style={{ padding: 40, textAlign: 'center', color: '#888' }}>Loading...</div>;
@@ -69,10 +69,10 @@ export default function AccountPage() {
         </div>
       </div>
 
-      <Link href={`/${username}/account/orders`} style={rowStyle}>
+      <Link href="/account/orders" style={rowStyle}>
         <span>MY ORDERS</span><span>›</span>
       </Link>
-      <Link href={`/${username}/account/reviews`} style={rowStyle}>
+      <Link href="/account/reviews" style={rowStyle}>
         <span>PENDING REVIEWS</span><span>›</span>
       </Link>
       <button
