@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { NIGERIA_STATES } from '@/lib/nigeria-states';
 import { db } from '@/lib/firebase';
 import { collection, addDoc, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
+import AccountSheet from '@/components/AccountSheet';
 
 const BASE_URL = 'https://pay.chatfi.pro/api';
 const STATE_NAMES = Object.keys(NIGERIA_STATES);
@@ -239,6 +240,7 @@ function StockBadge({ stock }: { stock: number | null }) {
 export default function StoreClient({ store, username }: { store: Store; username: string }) {
   const [cart, setCart] = useState<Record<string, number>>({});
   const [cartOpen, setCartOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
   const [cartVisible, setCartVisible] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
@@ -455,12 +457,17 @@ export default function StoreClient({ store, username }: { store: Store; usernam
           <button aria-label="Search" onClick={() => { const el = document.getElementById('store-search'); if (el) { el.scrollIntoView({ behavior: 'smooth' }); el.focus(); } }} style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.bone, background: scrolled ? 'transparent' : 'rgba(255,255,255,0.55)', backdropFilter: scrolled ? 'none' : 'blur(4px)' }}>
             <IconSearch />
           </button>
+          <button aria-label="Account" onClick={() => setAccountOpen(true)} style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.bone, background: scrolled ? 'transparent' : 'rgba(255,255,255,0.55)', backdropFilter: scrolled ? 'none' : 'blur(4px)' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </button>
           <button onClick={() => setCartOpen(true)} aria-label="Cart" style={{ position: 'relative', width: 36, height: 36, borderRadius: '50%', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: C.bone, background: scrolled ? 'transparent' : 'rgba(255,255,255,0.55)', backdropFilter: scrolled ? 'none' : 'blur(4px)' }}>
             <IconBag size={18} color={C.bone} />
             {itemCount > 0 && <span style={{ position: 'absolute', top: 1, right: 1, width: 16, height: 16, borderRadius: '50%', background: C.signal, color: '#fff', fontSize: 10, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{itemCount}</span>}
           </button>
         </div>
       </header>
+
+      <AccountSheet open={accountOpen} onClose={() => setAccountOpen(false)} username={username} accent={primary} />
 
       {/* ── Hero gradient banner ── */}
       <div style={{
