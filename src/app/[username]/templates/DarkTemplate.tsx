@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect, useMemo } from 'react';
 import { NIGERIA_STATES } from '@/lib/nigeria-states';
+import AccountSheet from '@/components/AccountSheet';
 
 const BASE_URL = 'https://pay.chatfi.pro/api';
 const STATE_NAMES = Object.keys(NIGERIA_STATES);
@@ -69,6 +70,7 @@ const FONTS = `
 export default function DarkTemplate({ store, username }: { store: Store; username: string }) {
   const [cart, setCart] = useState<Record<string, number>>({});
   const [cartOpen, setCartOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
   const [cartVisible, setCartVisible] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [imgErrors, setImgErrors] = useState<Record<string, boolean>>({});
@@ -168,12 +170,17 @@ export default function DarkTemplate({ store, username }: { store: Store; userna
           <button aria-label="Search" style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', background: 'rgba(255,255,255,0.08)' }}>
             <IconSearch />
           </button>
+          <button aria-label="Account" onClick={() => setAccountOpen(true)} style={{ width: 36, height: 36, borderRadius: '50%', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', background: 'rgba(255,255,255,0.08)' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </button>
           <button onClick={() => setCartOpen(true)} aria-label="Cart" style={{ position: 'relative', width: 36, height: 36, borderRadius: '50%', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', background: 'rgba(255,255,255,0.08)' }}>
             <IconBag size={18} color="#fff" />
             {itemCount > 0 && <span style={{ position: 'absolute', top: 1, right: 1, width: 16, height: 16, borderRadius: '50%', background: primary, color: '#000', fontSize: 10, fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{itemCount}</span>}
           </button>
         </div>
       </header>
+
+      <AccountSheet open={accountOpen} onClose={() => setAccountOpen(false)} username={username} accent={primary} />
 
       {/* Hero */}
       <div style={{ padding: '40px 16px 32px', borderBottom: '1px solid #1a1a1a' }}>

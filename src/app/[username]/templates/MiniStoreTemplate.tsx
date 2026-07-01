@@ -1,5 +1,6 @@
 'use client';
 import { useState, useMemo } from 'react';
+import AccountSheet from '@/components/AccountSheet';
 
 const BASE_URL = 'https://pay.chatfi.pro/api';
 
@@ -14,6 +15,7 @@ export default function Template4_MiniStore({ store, username }: { store: Store;
   const [cart, setCart] = useState<Record<string, number>>({});
   const [search, setSearch] = useState('');
   const [sheet, setSheet] = useState<'cart' | 'search' | 'msg' | 'delivery' | 'success' | null>(null);
+  const [accountOpen, setAccountOpen] = useState(false);
   const [toast, setToast] = useState('');
   const [form, setForm] = useState({ name: '', phone: '', address: '', state: '' });
   const [paying, setPaying] = useState(false);
@@ -92,12 +94,16 @@ export default function Template4_MiniStore({ store, username }: { store: Store;
           <button onClick={() => setSheet('search')} style={{ width: 38, height: 38, borderRadius: '50%', backgroundColor: '#f5f5f5', border: '1px solid #ebebeb', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 16 }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
           </button>
+          <button aria-label="Account" onClick={() => setAccountOpen(true)} style={{ width: 38, height: 38, borderRadius: '50%', backgroundColor: '#f5f5f5', border: '1px solid #ebebeb', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 16 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </button>
           <button onClick={() => setSheet('cart')} style={{ width: 38, height: 38, borderRadius: '50%', backgroundColor: '#f5f5f5', border: '1px solid #ebebeb', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 16, position: 'relative' }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#555" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6"/></svg>
             {itemCount > 0 && <span style={{ position: 'absolute', top: -3, right: -3, width: 17, height: 17, borderRadius: '50%', backgroundColor: '#0a0a0a', color: accent, fontSize: 9, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid #fff' }}>{itemCount}</span>}
           </button>
         </div>
       </div>
+      <AccountSheet open={accountOpen} onClose={() => setAccountOpen(false)} username={username} accent={accent} />
 
       {/* BANNER */}
       {store.banner ? (

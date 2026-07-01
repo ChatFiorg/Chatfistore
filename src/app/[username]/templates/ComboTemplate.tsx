@@ -1,6 +1,7 @@
 'use client';
 import { useState, useMemo } from 'react';
 import { NIGERIA_STATES } from '@/lib/nigeria-states';
+import AccountSheet from '@/components/AccountSheet';
 
 const BASE_URL = 'https://pay.chatfi.pro/api';
 const STATE_NAMES = Object.keys(NIGERIA_STATES);
@@ -33,6 +34,7 @@ export default function ComboTemplate({ store, username }: { store: Store; usern
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<'all' | 'instock' | 'low'>('all');
   const [modal, setModal] = useState<'cart' | 'delivery' | 'success' | null>(null);
+  const [accountOpen, setAccountOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [productModal, setProductModal] = useState(false);
   const [form, setForm] = useState({ name: '', phone: '', state: '', lga: '', street: '', house: '', email: '' });
@@ -134,6 +136,10 @@ export default function ComboTemplate({ store, username }: { store: Store; usern
             <IconSearch size={16} />
             <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." style={{ flex: 1, minWidth: 0, width: '100%', border: 'none', outline: 'none', backgroundColor: 'transparent', fontSize: 13, padding: '9px 0', color: '#111' }} />
           </div>
+          {/* Account */}
+          <button aria-label="Account" onClick={() => setAccountOpen(true)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 38, height: 38, borderRadius: 8, backgroundColor: '#f5f5f5', border: '1px solid #e5e5e5', cursor: 'pointer', flexShrink: 0, color: '#111' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </button>
           {/* Cart */}
           <button onClick={() => setModal('cart')} style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: 8, backgroundColor: primary, color: '#fff', border: 'none', borderRadius: 8, padding: '10px 16px', cursor: 'pointer', fontWeight: 600, fontSize: 14, flexShrink: 0 }}>
             <IconCart size={18} />
@@ -143,6 +149,7 @@ export default function ComboTemplate({ store, username }: { store: Store; usern
             )}
           </button>
         </div>
+        <AccountSheet open={accountOpen} onClose={() => setAccountOpen(false)} username={username} accent={primary} />
 
         {/* Category nav */}
         <div style={{ borderTop: '1px solid #f0f0f0', backgroundColor: '#fff' }}>
