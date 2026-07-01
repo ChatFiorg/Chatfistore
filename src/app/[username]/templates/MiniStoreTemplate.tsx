@@ -51,7 +51,12 @@ export default function Template4_MiniStore({ store, username }: { store: Store;
         for (let i = 0; i < item.qty; i++) {
           const res = await fetch(`${BASE_URL}/store/${username}/charge`, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ productId: item.product.id, buyerDelivery: form }),
+            body: JSON.stringify({
+              productId: item.product.id,
+              buyerName: form.name,
+              buyerPhone: form.phone,
+              buyerDelivery: `${form.address}${form.state ? ', ' + form.state : ''}`,
+            }),
           });
           const data = await res.json();
           if (data.error) throw new Error(data.error);
