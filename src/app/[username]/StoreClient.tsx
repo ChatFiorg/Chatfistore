@@ -4,6 +4,7 @@ import { NIGERIA_STATES } from '@/lib/nigeria-states';
 import { db } from '@/lib/firebase';
 import { collection, addDoc, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
 import AccountSheet from '@/components/AccountSheet';
+import { useBuyerSession } from '@/lib/useBuyerSession';
 
 const BASE_URL = 'https://pay.chatfi.pro/api';
 const STATE_NAMES = Object.keys(NIGERIA_STATES);
@@ -256,6 +257,7 @@ export default function StoreClient({ store, username }: { store: Store; usernam
   const [street, setStreet] = useState('');
   const [houseNo, setHouseNo] = useState('');
   const [email, setEmail] = useState('');
+  const { email: sessionEmail } = useBuyerSession(username);
   const [buying, setBuying] = useState(false);
   const [detecting, setDetecting] = useState(false);
   const [locationError, setLocationError] = useState('');
@@ -415,7 +417,7 @@ export default function StoreClient({ store, username }: { store: Store; usernam
         const res = await fetch(`/api/charge-naira`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, productId: selectedProduct.id, buyerName: buyerName.trim(), buyerPhone: buyerPhone.trim(), buyerDelivery: fullAddress, buyerEmail: email.trim() || `${buyerPhone.trim()}@chatfi.pro`, callbackUrl }),
+          body: JSON.stringify({ username, productId: selectedProduct.id, buyerName: buyerName.trim(), buyerPhone: buyerPhone.trim(), buyerDelivery: fullAddress, buyerEmail: sessionEmail || email.trim() || `${buyerPhone.trim()}@chatfi.pro`, callbackUrl }),
         });
         const data = await res.json();
         if (data.error) throw new Error(data.error);
@@ -424,7 +426,7 @@ export default function StoreClient({ store, username }: { store: Store; usernam
         const res = await fetch(`/api/charge`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, productId: selectedProduct.id, quantity, buyerName: buyerName.trim(), buyerPhone: buyerPhone.trim(), buyerAddress: fullAddress, buyerEmail: email.trim() || null }),
+          body: JSON.stringify({ username, productId: selectedProduct.id, quantity, buyerName: buyerName.trim(), buyerPhone: buyerPhone.trim(), buyerAddress: fullAddress, buyerEmail: sessionEmail || email.trim() || null }),
         });
         const data = await res.json();
         if (data.error) throw new Error(data.error);

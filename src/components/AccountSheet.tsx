@@ -153,7 +153,7 @@ export default function AccountSheet({ open, onClose, username, accent = '#0a0a0
             <p style={{ textAlign: 'center', color: '#888', padding: '20px 0' }}>Loading...</p>
           ) : view === 'email' ? (
             <>
-              <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 6 }}>LOGIN/REGISTER</h2>
+              <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 6, color: '#111' }}>LOGIN/REGISTER</h2>
               <p style={{ color: '#555', marginBottom: 18, fontSize: 14 }}>Enter your email below to receive an OTP.</p>
               <input type="email" placeholder="Email address" value={email} onChange={e => setEmail(e.target.value)} style={inputStyle} />
               {error && <p style={{ color: '#c0392b', fontSize: 13, marginBottom: 12 }}>{error}</p>}
@@ -162,7 +162,7 @@ export default function AccountSheet({ open, onClose, username, accent = '#0a0a0
           ) : view === 'otp' ? (
             <>
               {notice && <div style={{ background: '#e8f8ee', color: '#1a7a3c', padding: '12px 16px', borderRadius: 8, marginBottom: 18, fontSize: 13 }}>{notice}</div>}
-              <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 6 }}>Enter OTP</h2>
+              <h2 style={{ fontSize: 22, fontWeight: 700, marginBottom: 6, color: '#111' }}>Enter OTP</h2>
               <p style={{ color: '#555', marginBottom: 18, fontSize: 14 }}>Enter the OTP sent to your email.</p>
               <input type="text" placeholder="OTP" value={code} onChange={e => setCode(e.target.value)} style={inputStyle} />
               {error && <p style={{ color: '#c0392b', fontSize: 13, marginBottom: 12 }}>{error}</p>}
@@ -170,16 +170,16 @@ export default function AccountSheet({ open, onClose, username, accent = '#0a0a0
             </>
           ) : view === 'hub' && account ? (
             <>
-              <h2 style={{ fontSize: 18, fontWeight: 700, textAlign: 'center', marginBottom: 20 }}>My Account</h2>
-              <p style={{ fontWeight: 600 }}>{account.name || 'No name provided'}</p>
+              <h2 style={{ fontSize: 18, fontWeight: 700, textAlign: 'center', marginBottom: 20, color: '#111' }}>My Account</h2>
+              <p style={{ fontWeight: 600, color: '#111' }}>{account.name || 'No name provided'}</p>
               <p style={{ color: '#666', fontSize: 13, marginBottom: 16 }}>{buyerEmail}</p>
               <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
                 <div style={{ flex: 1, border: '1px solid #eee', borderRadius: 10, padding: 12, textAlign: 'center' }}>
-                  <p style={{ fontSize: 16, fontWeight: 700 }}>₦{Number(account.totalSpent).toLocaleString()}</p>
+                  <p style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>₦{Number(account.totalSpent).toLocaleString()}</p>
                   <p style={{ fontSize: 10, color: '#888' }}>TOTAL SPENT</p>
                 </div>
                 <div style={{ flex: 1, border: '1px solid #eee', borderRadius: 10, padding: 12, textAlign: 'center' }}>
-                  <p style={{ fontSize: 16, fontWeight: 700 }}>{account.orderCount}</p>
+                  <p style={{ fontSize: 16, fontWeight: 700, color: '#111' }}>{account.orderCount}</p>
                   <p style={{ fontSize: 10, color: '#888' }}>ORDERS</p>
                 </div>
               </div>
@@ -190,14 +190,14 @@ export default function AccountSheet({ open, onClose, username, accent = '#0a0a0
           ) : view === 'orders' ? (
             <>
               <button onClick={() => setView('hub')} style={{ background: 'none', border: 'none', color: '#666', fontSize: 14, cursor: 'pointer', padding: 0, marginBottom: 12 }}>‹ My Account</button>
-              <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16 }}>My Orders</h2>
+              <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16, color: '#111' }}>My Orders</h2>
               {orders.length === 0 ? (
                 <p style={{ color: '#888', textAlign: 'center', padding: '30px 0' }}>No orders yet</p>
               ) : orders.map(order => (
                 <div key={order.id} style={{ border: '1px solid #eee', borderRadius: 12, padding: 14, marginBottom: 10 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <p style={{ fontWeight: 600, fontSize: 13 }}>{order.items.map(i => `${i.productName} x${i.quantity}`).join(', ')}</p>
-                    <p style={{ fontWeight: 700, fontSize: 13 }}>₦{Number(order.amount).toLocaleString()}</p>
+                    <p style={{ fontWeight: 600, fontSize: 13, color: '#111' }}>{order.items.map(i => `${i.productName} x${i.quantity}`).join(', ')}</p>
+                    <p style={{ fontWeight: 700, fontSize: 13, color: '#111' }}>₦{Number(order.amount).toLocaleString()}</p>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 6 }}>
                     <p style={{ fontSize: 11, color: '#888' }}>{order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}</p>
@@ -211,12 +211,12 @@ export default function AccountSheet({ open, onClose, username, accent = '#0a0a0
           ) : view === 'reviews' ? (
             <>
               <button onClick={() => setView('hub')} style={{ background: 'none', border: 'none', color: '#666', fontSize: 14, cursor: 'pointer', padding: 0, marginBottom: 12 }}>‹ My Account</button>
-              <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16 }}>Pending Reviews</h2>
+              <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 16, color: '#111' }}>Pending Reviews</h2>
               {orders.filter(o => o.fulfillmentStatus === 'delivered').length === 0 ? (
                 <p style={{ color: '#888', textAlign: 'center', padding: '30px 0' }}>No delivered orders awaiting review yet</p>
               ) : orders.filter(o => o.fulfillmentStatus === 'delivered').map(order => (
                 <div key={order.id} style={{ border: '1px solid #eee', borderRadius: 12, padding: 14, marginBottom: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <p style={{ fontWeight: 600, fontSize: 13 }}>{order.items.map(i => `${i.productName} x${i.quantity}`).join(', ')}</p>
+                  <p style={{ fontWeight: 600, fontSize: 13, color: '#111' }}>{order.items.map(i => `${i.productName} x${i.quantity}`).join(', ')}</p>
                   <button disabled style={{ padding: '8px 14px', borderRadius: 8, border: '1px solid #ddd', background: '#f5f5f5', color: '#999', fontSize: 11, cursor: 'not-allowed' }} title="Review submission coming soon">Write Review</button>
                 </div>
               ))}
