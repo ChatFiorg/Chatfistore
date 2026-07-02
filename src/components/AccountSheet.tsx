@@ -120,6 +120,7 @@ export default function AccountSheet({ open, onClose, username, accent = '#0a0a0
   const inputStyle: React.CSSProperties = {
     width: '100%', padding: '14px 16px', border: '1px solid #ddd', borderRadius: 10,
     fontSize: 15, marginBottom: 16, boxSizing: 'border-box',
+    color: '#111', backgroundColor: '#fff', colorScheme: 'light',
   };
 
   const buttonStyle: React.CSSProperties = {
