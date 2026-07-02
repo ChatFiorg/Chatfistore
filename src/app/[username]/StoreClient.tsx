@@ -411,13 +411,25 @@ export default function StoreClient({ store, username }: { store: Store; usernam
     }
     setBuying(true); setError('');
     const fullAddress = [houseNo.trim(), street.trim(), addrLga, addrState].filter(Boolean).join(', ');
+    // Fresh session check at the moment of checkout — the useBuyerSession
+    // hook only checks once on page mount, so if the buyer logged in via
+    // the AccountSheet AFTER the page loaded, that hook's cached value is
+    // stale. Re-checking here guarantees the order attributes correctly.
+    let freshSessionEmail: string | null = sessionEmail;
+    try {
+      const sessionRes = await fetch(`/api/auth/me?username=${username}`);
+      const sessionData = await sessionRes.json();
+      freshSessionEmail = sessionData.error ? null : sessionData.email;
+    } catch {
+      freshSessionEmail = sessionEmail;
+    }
     try {
       if (paymentMethod === 'naira') {
         const callbackUrl = `https://${username}.chatfi.pro/order`;
         const res = await fetch(`/api/charge-naira`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, productId: selectedProduct.id, buyerName: buyerName.trim(), buyerPhone: buyerPhone.trim(), buyerDelivery: fullAddress, buyerEmail: sessionEmail || email.trim() || `${buyerPhone.trim()}@chatfi.pro`, callbackUrl }),
+          body: JSON.stringify({ username, productId: selectedProduct.id, buyerName: buyerName.trim(), buyerPhone: buyerPhone.trim(), buyerDelivery: fullAddress, buyerEmail: freshSessionEmail || email.trim() || `${buyerPhone.trim()}@chatfi.pro`, callbackUrl }),
         });
         const data = await res.json();
         if (data.error) throw new Error(data.error);
@@ -426,7 +438,7 @@ export default function StoreClient({ store, username }: { store: Store; usernam
         const res = await fetch(`/api/charge`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, productId: selectedProduct.id, quantity, buyerName: buyerName.trim(), buyerPhone: buyerPhone.trim(), buyerAddress: fullAddress, buyerEmail: sessionEmail || email.trim() || null }),
+          body: JSON.stringify({ username, productId: selectedProduct.id, quantity, buyerName: buyerName.trim(), buyerPhone: buyerPhone.trim(), buyerAddress: fullAddress, buyerEmail: freshSessionEmail || email.trim() || null }),
         });
         const data = await res.json();
         if (data.error) throw new Error(data.error);
