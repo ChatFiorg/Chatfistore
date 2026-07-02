@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookieName } from "@/lib/buyerSession";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const username = searchParams.get("username");
@@ -12,6 +14,7 @@ export async function GET(req: NextRequest) {
   try {
     const res = await fetch(`https://pay.chatfi.pro/api/store/${username}/auth/me`, {
       headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
     });
     const data = await res.json();
     return NextResponse.json(data, { status: res.status });
